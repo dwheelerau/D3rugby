@@ -8,7 +8,7 @@
 // setup svg margin conventions
 
 var choice = ["Australia", "NZ"];
-var colors = {"Australia": "#ffff00",
+var colors = {"Australia": "#ffe200",
                 "NZ": "black"};
 var currentChoice = choice[0];
 // document.getElementById("h2").innerHTML = " World cup leading try scorers";
