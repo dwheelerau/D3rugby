@@ -1,6 +1,9 @@
 body {
     font-family: "Arial", sans-serif;
 }
+h2 {
+    text-align: center;
+}
 .bar {
     fill: #5f89ad;
 }

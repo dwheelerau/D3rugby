@@ -9,6 +9,8 @@
 
 var choice = ["Australia", "NZ"];
 var currentChoice = choice[0];
+// document.getElementById("h2").innerHTML = " World cup leading try scorers";
+d3.selectAll("h2").text(currentChoice + " World Cup leading try scorers");
 var datajson = {"Australia": [{"name": "apple",
     "score": 1},
     {"name": "ban",
@@ -106,6 +108,7 @@ bars.on('click', function() {
     } else {
         currentChoice = choice[0];
     }
+    d3.selectAll("h2").text(currentChoice + " World Cup leading try scorers");
     // update axes
     y.domain(datajson[currentChoice].map(function(d) {
         return d.name;
