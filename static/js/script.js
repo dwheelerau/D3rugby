@@ -62,7 +62,7 @@ var yAxis = d3.svg.axis()
     .orient("left"); // barh
 
 var gy = svg.append("g")
-    .attr("class", "yaxis")
+    .attr("class", "y axis")
     .call(yAxis);
 
 var bars = svg.selectAll(".bar")
