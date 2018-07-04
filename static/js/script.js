@@ -123,6 +123,7 @@ bars.on('click', function() {
         .append("g");
     // now redarw the rectangles using new data
     bars.selectAll('rect')
+        .transition()
         .attr("y", function(d) {
             // 'y' here is the y scale
             return y(d.name);
@@ -138,6 +139,7 @@ bars.on('click', function() {
        .enter();
     // use this data to update text and position
     bars.selectAll("text")
+        .transition()
         // pos of lab half down bar
         .attr("y", function(d) {
             return y(d.name) + y.rangeBand() / 2 + 4;
