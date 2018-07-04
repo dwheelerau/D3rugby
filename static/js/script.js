@@ -8,6 +8,8 @@
 // setup svg margin conventions
 
 var choice = ["Australia", "NZ"];
+var colors = {"Australia": "#ffff00",
+                "NZ": "black"};
 var currentChoice = choice[0];
 // document.getElementById("h2").innerHTML = " World cup leading try scorers";
 d3.selectAll("h2").text(currentChoice + " World Cup leading try scorers");
@@ -85,7 +87,8 @@ bars.append("rect")
     .attr("x", 0)
     .attr("width", function(d) {
         return x(d.score);
-    });
+    })
+    .attr("fill", colors[currentChoice]);
 // add labels to right of each bar
 bars.append("text")
     .attr("class", "label")
@@ -138,7 +141,7 @@ bars.on('click', function() {
         })
         .each("end", function() { // <-- Executes at end of transition
             d3.select(this)
-            .attr("fill", "black");
+            .attr("fill", colors[currentChoice]);
         });
     // add the new data to the labels using the class name
     svg.selectAll(".label")
