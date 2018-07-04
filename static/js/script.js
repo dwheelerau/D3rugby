@@ -135,6 +135,10 @@ bars.on('click', function() {
         .attr("x", 0)
         .attr("width", function(d) {
         return x(d.score);
+        })
+        .each("end", function() { // <-- Executes at end of transition
+            d3.select(this)
+            .attr("fill", "black");
         });
     // add the new data to the labels using the class name
     svg.selectAll(".label")
