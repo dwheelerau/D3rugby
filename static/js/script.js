@@ -6,6 +6,9 @@
 // WARNING: remove the final commented braces at very end of this scrpt
 // if you uncomment the above function
 // setup svg margin conventions
+
+var choice = ["Australia", "NZ"];
+var currentChoice = choice[0]
 var datajson = {"Australia": [{"name": "apple",
     "score": 1},
     {"name": "ban",
@@ -15,7 +18,7 @@ var datajson = {"Australia": [{"name": "apple",
     {"name": "dan",
         "score": 4}],
     "NZ": [{"name": "zam",
-        "score": 9},
+        "score": 4},
         {"name": "xam",
             "score": 6}],
 };
@@ -39,7 +42,6 @@ var svg = d3.select("#graphic")
 var x = d3.scale.linear()
     .range([0, width])
     .domain([0, d3.max(datajson.Australia, function(d) {
-        console.log(d.score);
         return d.score;
     })]);
 
@@ -51,7 +53,6 @@ var x = d3.scale.linear()
 var y = d3.scale.ordinal()
     .rangeRoundBands([height, 0], 0.1)
     .domain(datajson.Australia.map(function(d) {
-        console.log(d.name);
         return d.name;
     }));
 
@@ -74,7 +75,6 @@ var bars = svg.selectAll(".bar")
 bars.append("rect")
     .attr("class", "bar")
     .attr("y", function(d) {
-        console.log(d.name);
         return y(d.name);
     })
     .attr("height", y.rangeBand())
@@ -98,5 +98,37 @@ bars.append("text")
     });
 bars.on('click', function() {
     console.log('alert');
+    if (currentChoice == choice[0]) {
+        currentChoice = choice[1];
+    } else {
+        currentChoice = choice[0];
+    }
+    console.log(datajson[currentChoice]);
+    bars.selectAll('rect')
+        .data(datajson[currentChoice])
+        .transition()
+        .attr("y", function(d) {
+            console.log(d.name);
+            return y(d.name);
+        })
+        .attr("height", y.rangeBand())
+        .attr("x", 0)
+        .attr("width", function(d) {
+        return x(d.score);
+        })
+        .attr("fill", "black");
+    bars.selectAll("text")
+        .data(datajson[currentChoice])
+        // pos of lab half down bar
+        .attr("y", function(d) {
+            return y(d.name) + y.rangeBand() / 2 + 4;
+        })
+        // pos 3 pix to the right of the bar
+        .attr("x", function(d) {
+            return x(d.score) + 3;
+        })
+        .text(function(d) {
+            return d.score;
+        });
 });
 // });
