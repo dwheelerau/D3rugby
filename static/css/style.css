@@ -1,8 +1,8 @@
 body {
     font-family: "Arial", sans-serif;
 }
-.bar {
-    fill: #5f89ad;
+h2 {
+    text-align: center;
 }
 .axis {
     font-size: 13px;
