@@ -1,17 +1,9 @@
-// d3.json("static/data/data.json", function(error, data) {
-//    if (error) throw error;
-//    data = data.sort(function(a, b) {
-//        return d3.ascending(a.value, b.value);
-//    });
-// WARNING: remove the final commented braces at very end of this scrpt
-// if you uncomment the above function
-// setup svg margin conventions
-
+var maxNames = 20;
 var choice = ["Australia", "New Zealand"];
 var colors = {"Australia": "#ffe200",
                 "NZ": "black"};
 var currentChoice = choice[0];
-// document.getElementById("h2").innerHTML = " World cup leading try scorers";
+
 d3.selectAll("h2").text(currentChoice + " World Cup leading try scorers");
 var dataJson;
 
@@ -42,21 +34,21 @@ function drawBox() {
 
     var x = d3.scale.linear()
         .range([0, width])
-        .domain([0, d3.max(dataJson.Australia, function(d) {
+        .domain([0, d3.max(dataJson[currentChoice], function(d) {
             return d.try;
         })]);
+    var names = dataJson[currentChoice].map(function(t) {
+        return t.name;
+    }).slice(0, maxNames);
 
     var y = d3.scale.ordinal()
         .rangeRoundBands([height, 0], 0.1)
-        .domain(dataJson.Australia.map(function(d) {
-            console.log(d.name);
-            return d.name.slice(0,10);
-        }));
+        .domain(names);
 
     // draw the axes
     var yAxis = d3.svg.axis()
         .scale(y)
-        .tickSize(0) // no ticks
+        .tickSize(0) // no ticks would be 0
         .orient("left"); // barh
     var xAxis = d3.svg.axis()
         .scale(x)
@@ -65,12 +57,9 @@ function drawBox() {
     var gy = svg.append("g")
         .attr("class", "y axis")
         .call(yAxis);
-    var gx = svg.append("g")
-        .attr("class", "x axis")
-        .call(xAxis);
     // append the data to the bars
     var bars = svg.selectAll(".bar")
-        .data(dataJson.Australia)
+        .data(dataJson[currentChoice])
         .enter()
         .append("g");
     // add the rectangles
@@ -82,7 +71,7 @@ function drawBox() {
         .attr("height", y.rangeBand())
         .attr("x", 0)
         .attr("width", function(d) {
-            return x(d.score);
+            return x(d.try);
         })
         .attr("fill", colors[currentChoice]);
     // add labels to right of each bar
@@ -94,10 +83,10 @@ function drawBox() {
         })
         // pos 3 pix to the right of the bar
         .attr("x", function(d) {
-            return x(d.score) + 3;
+            return x(d.try) + 3;
         })
         .text(function(d) {
-            return d.score;
+            return d.try;
         });
 
     // onclick function to update data
@@ -109,15 +98,16 @@ function drawBox() {
         }
         d3.selectAll("h2").text(currentChoice + " World Cup leading try scorers");
         // update axes
-        y.domain(dataJson[currentChoice].map(function(d) {
-            return d.name;
-        }));
+        names = dataJson[currentChoice].map(function(t) {
+            return t.name;
+        }).slice(0, maxNames);
+
+        y.domain(names);
         x.domain([0, d3.max(dataJson[currentChoice], function(d) {
-            return d.score;
+            return d.try;
         })]);
         // call the axis to update
         gy.call(yAxis);
-        gx.call(xAxis);
         // update the data, need enter because size has changed
         svg.selectAll(".bar")
             .data(dataJson[currentChoice])
@@ -133,7 +123,7 @@ function drawBox() {
             .attr("height", y.rangeBand())
             .attr("x", 0)
             .attr("width", function(d) {
-            return x(d.score);
+            return x(d.try);
             })
             .each("end", function() { // <-- Executes at end of transition
                 d3.select(this)
@@ -152,11 +142,11 @@ function drawBox() {
             })
             // pos 3 pix to the right of the bar
             .attr("x", function(d) {
-                console.log(d.score);
-                return x(d.score) + 3;
+                console.log(d.try);
+                return x(d.try) + 3;
             })
             .text(function(d) {
-                return d.score;
+                return d.try;
             });
     });
 }
