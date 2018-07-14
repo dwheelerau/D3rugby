@@ -16,6 +16,20 @@ d3.json("static/data/data2.json", function(error, data) {
 });
 
 function drawBox() {
+    // get sorted list of values for best across all countries
+    sortable = [];
+    for (var c in dataJson) {
+        for (var n in dataJson[c]) {
+            sortable.push([n, dataJson[c][n], c]);
+        }}
+
+    sortable.sort(function(a, b) {
+            return d3.descending(a[1]['try'], b[1]['try']);
+    });
+    // note this obj is a little strange...
+    var bestPlayer = sortable.slice(0, maxNames);
+    console.log(bestPlayer);
+
     var margin = {
         top: 15,
         right: 25,
@@ -142,7 +156,6 @@ function drawBox() {
             })
             // pos 3 pix to the right of the bar
             .attr("x", function(d) {
-                console.log(d.try);
                 return x(d.try) + 3;
             })
             .text(function(d) {
