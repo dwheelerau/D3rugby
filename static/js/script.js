@@ -25,9 +25,9 @@ var colors = {"Australia": "#ffe200",
                 "Zimbabwe":"green"};
 
 var choice = Object.keys(colors);
-var currentChoice = choice[0];
+var currentChoice = "";
 
-d3.selectAll("h2").text(currentChoice + " World Cup leading try scorers");
+d3.selectAll("h2").text(currentChoice + " Rugby World Cup leading try scorers");
 var dataJson;
 
 d3.json("static/data/data.json", function(error, data) {
@@ -143,12 +143,14 @@ function drawBox() {
         });
 
     // onclick function to update data
-    bars.on('click', function() {
-        if (currentChoice == choice[0]) {
-            currentChoice = choice[1];
-        } else {
-            currentChoice = choice[0];
-        }
+    d3.select('#inds').on("change", function () {
+        var sect = document.getElementById("inds");
+        var currentChoice = sect.options[sect.selectedIndex].value;
+        //if (currentChoice == choice[0]) {
+        //    currentChoice = choice[1];
+        //} else {
+        //    currentChoice = choice[0];
+        //}
         d3.selectAll("h2").text(currentChoice + " World Cup leading try scorers");
         // update axes
         names = dataJson[0][currentChoice].map(function(t) {
