@@ -1,13 +1,38 @@
 var maxNames = 20;
-var choice = ["Australia", "New Zealand"];
 var colors = {"Australia": "#ffe200",
-                "New Zealand": "black"};
+                "New Zealand": "black",
+                "Argentina": "#4295f4",
+                "Canada":"red",
+                "Ivory Coast":"orange",
+                "England":"white",
+                "Fiji":"white",
+                "France":"blue",
+                "Georgia":"#9d2823",
+                "Ireland":"green",
+                "Italy":"blue",
+                "Japan":"red",
+                "Namibia":"light blue",
+                "Portugal":"white",
+                "Romania":"yellow",
+                "Russia":"red",
+                "Samoa":"blue",
+                "Scotland":"dark blue",
+                "South Africa":"green",
+                "Tonga":"red",
+                "Uruguay":"#4396cc",
+                "United States":"white",
+                "Wales":"red",
+                "Zimbabwe":"green"};
+
+var choice = Object.keys(colors);
+console.log(choice);
 var currentChoice = choice[0];
 
 d3.selectAll("h2").text(currentChoice + " World Cup leading try scorers");
 var dataJson;
 
-d3.json("static/data/data2.json", function(error, data) {
+
+d3.json("static/data/data.json", function(error, data) {
     if (error) {
         throw error;
     }
@@ -17,18 +42,25 @@ d3.json("static/data/data2.json", function(error, data) {
 
 function drawBox() {
     // get sorted list of values for best across all countries
-    sortable = [];
-    for (var c in dataJson) {
-        for (var n in dataJson[c]) {
-            sortable.push([n, dataJson[c][n], c]);
-        }}
+    //sortable = [];
+    //for (var c in dataJson[0]) {
+    //    for (var n in dataJson[c]) {
+    //        sortable.push([n, dataJson[c][n], c]);
+    //    }}
 
-    sortable.sort(function(a, b) {
-            return d3.descending(a[1]['try'], b[1]['try']);
-    });
+    //sortable.sort(function(a, b) {
+    //        return d3.descending(a[1]['try'], b[1]['try']);
+    //});
     // note this obj is a little strange...
-    var bestPlayer = sortable.slice(0, maxNames);
-
+    //var bestPlayer = sortable.slice(0, maxNames);
+    var key = function(d) {
+    for (var i=0; i < names.length; i++) {
+        if (d.name == names[i]) {
+            console.log(d.name);
+            return d.name;
+            }
+        }
+    };
     var margin = {
         top: 15,
         right: 25,
@@ -47,10 +79,10 @@ function drawBox() {
 
     var x = d3.scale.linear()
         .range([0, width])
-        .domain([0, d3.max(dataJson[currentChoice], function(d) {
+        .domain([0, d3.max(dataJson[0][currentChoice], function(d) {
             return d.try;
         })]);
-    var names = dataJson[currentChoice].map(function(t) {
+    var names = dataJson[0][currentChoice].map(function(t) {
         return t.name;
     }).slice(0, maxNames);
 
@@ -72,7 +104,7 @@ function drawBox() {
         .call(yAxis);
     // append the data to the bars
     var bars = svg.selectAll(".bar")
-        .data(dataJson[currentChoice])
+        .data(dataJson[0][currentChoice].slice(0,20))
         .enter()
         .append("g");
     // add the rectangles
@@ -111,19 +143,19 @@ function drawBox() {
         }
         d3.selectAll("h2").text(currentChoice + " World Cup leading try scorers");
         // update axes
-        names = dataJson[currentChoice].map(function(t) {
+        names = dataJson[0][currentChoice].map(function(t) {
             return t.name;
         }).slice(0, maxNames);
 
         y.domain(names);
-        x.domain([0, d3.max(dataJson[currentChoice], function(d) {
+        x.domain([0, d3.max(dataJson[0][currentChoice], function(d) {
             return d.try;
         })]);
         // call the axis to update
         gy.call(yAxis);
         // update the data, need enter because size has changed
         svg.selectAll(".bar")
-            .data(dataJson[currentChoice])
+            .data(dataJson[0][currentChoice])
             .enter()
             .append("g");
         // now redarw the rectangles using new data
@@ -144,7 +176,7 @@ function drawBox() {
             });
         // add the new data to the labels using the class name
         svg.selectAll(".label")
-        .data(dataJson[currentChoice])
+        .data(dataJson[0][currentChoice].slice(0,20))
         .enter();
         // use this data to update text and position
         bars.selectAll("text")
@@ -157,7 +189,7 @@ function drawBox() {
             .attr("x", function(d) {
                 return x(d.try) + 3;
             })
-            .text(function(d, i) {
+            .text(function(d) {
                 return d.try;
             });
     });
