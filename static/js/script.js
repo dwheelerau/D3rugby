@@ -1,7 +1,7 @@
 var maxNames = 20;
 var choice = ["Australia", "New Zealand"];
 var colors = {"Australia": "#ffe200",
-                "NZ": "black"};
+                "New Zealand": "black"};
 var currentChoice = choice[0];
 
 d3.selectAll("h2").text(currentChoice + " World Cup leading try scorers");
@@ -11,7 +11,7 @@ d3.json("static/data/data2.json", function(error, data) {
     if (error) {
         throw error;
     }
-    dataJson = data; 
+    dataJson = data;
     drawBox();
 });
 
@@ -28,7 +28,6 @@ function drawBox() {
     });
     // note this obj is a little strange...
     var bestPlayer = sortable.slice(0, maxNames);
-    console.log(bestPlayer);
 
     var margin = {
         top: 15,
@@ -85,7 +84,7 @@ function drawBox() {
         .attr("height", y.rangeBand())
         .attr("x", 0)
         .attr("width", function(d) {
-            return x(d.try);
+                    return x(d.try);
         })
         .attr("fill", colors[currentChoice]);
     // add labels to right of each bar
@@ -158,7 +157,7 @@ function drawBox() {
             .attr("x", function(d) {
                 return x(d.try) + 3;
             })
-            .text(function(d) {
+            .text(function(d, i) {
                 return d.try;
             });
     });
