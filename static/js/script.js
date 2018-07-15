@@ -84,10 +84,7 @@ function drawBox() {
         .domain([0, d3.max(bestPlayer[1], function(d) {
             return d.try;
         })]);
-    //var names = bestPlayer[1].map(function(t) {
-    //    console.log(t.name);
-    //    return t.name;
-    //}).slice(0, maxNames);
+    // get the names for the y axis
     var names = [];
     for (var i=0; i<bestPlayer.length; i++) {
        names.push(bestPlayer[i][1].name);
@@ -123,9 +120,13 @@ function drawBox() {
         .attr("height", y.rangeBand())
         .attr("x", 0)
         .attr("width", function(d) {
-                    return x(d[1].try);
+            return x(d[1].try);
         })
-        .attr("fill", colors[currentChoice]);
+        //.attr("fill", colors[currentChoice]);
+        .attr("fill", function(d) {
+            console.log(d[2]);
+            return colors[d[2]];
+        });
     // add labels to right of each bar
     bars.append("text")
         .attr("class", "label")
