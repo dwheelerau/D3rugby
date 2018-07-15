@@ -25,12 +25,10 @@ var colors = {"Australia": "#ffe200",
                 "Zimbabwe":"green"};
 
 var choice = Object.keys(colors);
-console.log(choice);
 var currentChoice = choice[0];
 
 d3.selectAll("h2").text(currentChoice + " World Cup leading try scorers");
 var dataJson;
-
 
 d3.json("static/data/data.json", function(error, data) {
     if (error) {
@@ -42,17 +40,17 @@ d3.json("static/data/data.json", function(error, data) {
 
 function drawBox() {
     // get sorted list of values for best across all countries
-    //sortable = [];
-    //for (var c in dataJson[0]) {
-    //    for (var n in dataJson[c]) {
-    //        sortable.push([n, dataJson[c][n], c]);
-    //    }}
+    sortable = [];
+    for (var c in dataJson[0]) {
+        for (var n in dataJson[0][c]) {
+            sortable.push([n, dataJson[0][c][n], c]);
+        }}
 
-    //sortable.sort(function(a, b) {
-    //        return d3.descending(a[1]['try'], b[1]['try']);
-    //});
+    sortable.sort(function(a, b) {
+            return d3.descending(a[1]['try'], b[1]['try']);
+    });
     // note this obj is a little strange...
-    //var bestPlayer = sortable.slice(0, maxNames);
+    var bestPlayer = sortable.slice(0, maxNames);
     var key = function(d) {
     for (var i=0; i < names.length; i++) {
         if (d.name == names[i]) {
@@ -61,6 +59,10 @@ function drawBox() {
             }
         }
     };
+    var keyBest = function(d) {
+    return d.name;
+    };
+
     var margin = {
         top: 15,
         right: 25,
@@ -79,13 +81,17 @@ function drawBox() {
 
     var x = d3.scale.linear()
         .range([0, width])
-        .domain([0, d3.max(dataJson[0][currentChoice], function(d) {
+        .domain([0, d3.max(bestPlayer[1], function(d) {
             return d.try;
         })]);
-    var names = dataJson[0][currentChoice].map(function(t) {
-        return t.name;
-    }).slice(0, maxNames);
-
+    //var names = bestPlayer[1].map(function(t) {
+    //    console.log(t.name);
+    //    return t.name;
+    //}).slice(0, maxNames);
+    var names = [];
+    for (var i=0; i<bestPlayer.length; i++) {
+       names.push(bestPlayer[i][1].name);
+    }
     var y = d3.scale.ordinal()
         .rangeRoundBands([height, 0], 0.1)
         .domain(names);
@@ -104,19 +110,20 @@ function drawBox() {
         .call(yAxis);
     // append the data to the bars
     var bars = svg.selectAll(".bar")
-        .data(dataJson[0][currentChoice].slice(0,20))
+        //.data(dataJson[0][currentChoice].slice(0,20))
+        .data(bestPlayer)
         .enter()
         .append("g");
     // add the rectangles
     bars.append("rect")
         .attr("class", "bar")
         .attr("y", function(d) {
-            return y(d.name);
+            return y(d[1].name);
         })
         .attr("height", y.rangeBand())
         .attr("x", 0)
         .attr("width", function(d) {
-                    return x(d.try);
+                    return x(d[1].try);
         })
         .attr("fill", colors[currentChoice]);
     // add labels to right of each bar
@@ -124,14 +131,14 @@ function drawBox() {
         .attr("class", "label")
         // pos of lab half down bar
         .attr("y", function(d) {
-            return y(d.name) + y.rangeBand() / 2 + 4;
+            return y(d[1].name) + y.rangeBand() / 2 + 4;
         })
         // pos 3 pix to the right of the bar
         .attr("x", function(d) {
-            return x(d.try) + 3;
+            return x(d[1].try) + 3;
         })
         .text(function(d) {
-            return d.try;
+            return d[1].try;
         });
 
     // onclick function to update data
