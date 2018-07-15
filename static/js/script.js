@@ -107,7 +107,6 @@ function drawBox() {
         .call(yAxis);
     // append the data to the bars
     var bars = svg.selectAll(".bar")
-        //.data(dataJson[0][currentChoice].slice(0,20))
         .data(bestPlayer)
         .enter()
         .append("g");
@@ -122,7 +121,6 @@ function drawBox() {
         .attr("width", function(d) {
             return x(d[1].try);
         })
-        //.attr("fill", colors[currentChoice]);
         .attr("fill", function(d) {
             console.log(d[2]);
             return colors[d[2]];
@@ -146,11 +144,6 @@ function drawBox() {
     d3.select('#inds').on("change", function () {
         var sect = document.getElementById("inds");
         var currentChoice = sect.options[sect.selectedIndex].value;
-        //if (currentChoice == choice[0]) {
-        //    currentChoice = choice[1];
-        //} else {
-        //    currentChoice = choice[0];
-        //}
         d3.selectAll("h2").text(currentChoice + " World Cup leading try scorers");
         // update axes
         names = dataJson[0][currentChoice].map(function(t) {
