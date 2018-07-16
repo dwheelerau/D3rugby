@@ -23,31 +23,6 @@ var colors = {"Australia": "#ffe200",
                 "Wales":"red",
                 "Zimbabwe":"green"};
 
-var countries = {"Australia": " for Aus",
-                "New Zealand": " for NZ",
-                "Argentina": " for Arg",
-                "Canada":" for Can",
-                "England":" for Eng",
-                "Fiji":" for Fij",
-                "France":" for Fra",
-                "Georgia":"",
-                "Ireland":" for Ire",
-                "Italy":" for Ita",
-                "Japan":" for Jap",
-                "Namibia":"light blue",
-                "Portugal":"white",
-                "Romania":"yellow",
-                "Russia":" for Rus",
-                "Samoa":" for Sam",
-                "Scotland":" for Sco",
-                "South Africa":" for SA",
-                "Tonga":" for Ton",
-                "Uruguay":"#4396cc",
-                "United States":" for USA",
-                "Wales":" for Wal",
-                "Zimbabwe":" for Zim"};
-
-var choice = Object.keys(colors);
 var currentChoice = "";
 
 d3.selectAll("h2").text(currentChoice + " Rugby World Cup leading try scorers");
@@ -138,7 +113,9 @@ function drawBox() {
         .attr("width", function(d) {
             return x(d[1].try);
         })
-        .attr("fill", "#4295f4");
+        .attr("fill", "#4295f4")
+        .on('mouseover', mouseover)
+        .on('mouseout', mouseout);
     // add labels to right of each bar
     bars.append("text")
         .attr("class", "label")
@@ -209,4 +186,25 @@ function drawBox() {
             });
         }
     });
+}
+function mouseover(d) {
+    var file = "static/data/" + d[1].name + ".jpg"
+    console.log(file);
+    d3.select("#tooltip")
+        .select("#value")
+        .append('img')
+        .attr('src',file)
+        .attr("width", 150)
+        .attr("height", 150);
+        //.append("svg:image")
+        //.attr("xlink:href", file)
+        //.attr("width", 150)
+        //.attr("height", 200);
+    d3.select("#tooltip").classed("hidden", false);
+    d3.select("#tooltip")
+        .style("top", (event.pageY-10)+"px")
+        .style("left", (event.pageX-10)+"px");
+}
+function mouseout(d) {
+    d3.select("#tooltip").classed("hidden", true);
 }
