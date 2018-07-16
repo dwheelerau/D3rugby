@@ -22,29 +22,30 @@ var colors = {"Australia": "#ffe200",
                 "United States":"white",
                 "Wales":"red",
                 "Zimbabwe":"green"};
-var countries = {"Australia": "(AU)",
-                "New Zealand": "(NZ)",
-                "Argentina": "(AR)",
-                "Canada":"red",
-                "England":"white",
-                "Fiji":"white",
-                "France":"blue",
-                "Georgia":"#9d2823",
-                "Ireland":"green",
-                "Italy":"blue",
-                "Japan":"red",
+
+var countries = {"Australia": " for Aus",
+                "New Zealand": " for NZ",
+                "Argentina": " for Arg",
+                "Canada":" for Can",
+                "England":" for Eng",
+                "Fiji":" for Fij",
+                "France":" for Fra",
+                "Georgia":"",
+                "Ireland":" for Ire",
+                "Italy":" for Ita",
+                "Japan":" for Jap",
                 "Namibia":"light blue",
                 "Portugal":"white",
                 "Romania":"yellow",
-                "Russia":"red",
-                "Samoa":"blue",
-                "Scotland":"dark blue",
-                "South Africa":"green",
-                "Tonga":"red",
+                "Russia":" for Rus",
+                "Samoa":" for Sam",
+                "Scotland":" for Sco",
+                "South Africa":" for SA",
+                "Tonga":" for Ton",
                 "Uruguay":"#4396cc",
-                "United States":"white",
-                "Wales":"red",
-                "Zimbabwe":"green"};
+                "United States":" for USA",
+                "Wales":" for Wal",
+                "Zimbabwe":" for Zim"};
 
 var choice = Object.keys(colors);
 var currentChoice = "";
@@ -101,7 +102,7 @@ function drawBox() {
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
     var x = d3.scaleLinear()
-        .range([0, width])
+        .range([0, width-150])
         .domain([0, d3.max(bestPlayer[1], function(d) {
             return d.try;
         })]);
@@ -137,22 +138,21 @@ function drawBox() {
         .attr("width", function(d) {
             return x(d[1].try);
         })
-        .attr("fill", function(d) {
-            return colors[d[2]];
-        });
+        .attr("fill", "#4295f4");
     // add labels to right of each bar
     bars.append("text")
         .attr("class", "label")
         // pos of lab half down bar
         .attr("y", function(d) {
-            return y(d[1].name) + y.bandwidth() / 2 + 4;
+            return y(d[1].name) + y.bandwidth() / 2 + 4 ;
         })
         // pos 3 pix to the right of the bar
         .attr("x", function(d) {
             return x(d[1].try) + 3;
         })
         .text(function(d) {
-            return d[1].try;
+            console.log(d);
+            return d[1].try + " tries for " + d[2];
         });
 
     // onclick function to update data
@@ -190,7 +190,7 @@ function drawBox() {
             .attr("width", function(d) {
                 return x(d.try);
             })
-            .attr("fill", colors[currentChoice]);
+            .attr("fill", "#4295f4");
         // add the new data to the labels using the class name
         svg.selectAll(".label")
             .data(dataJson[0][currentChoice].slice(0,20));
