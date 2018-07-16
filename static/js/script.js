@@ -89,7 +89,8 @@ function drawBox() {
     }
     var y = d3.scaleBand()
         .rangeRound([height, 0], 0.1)
-        .domain(names);
+        .domain(names)
+        .padding(.1);
 
     // draw the axes
     var yAxis = d3.axisLeft(y)
