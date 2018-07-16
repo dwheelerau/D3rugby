@@ -3,7 +3,6 @@ var colors = {"Australia": "#ffe200",
                 "New Zealand": "black",
                 "Argentina": "#4295f4",
                 "Canada":"red",
-                "Ivory Coast":"orange",
                 "England":"white",
                 "Fiji":"white",
                 "France":"blue",
@@ -54,7 +53,6 @@ function drawBox() {
     var key = function(d) {
     for (var i=0; i < names.length; i++) {
         if (d.name == names[i]) {
-            console.log(d.name);
             return d.name;
             }
         }
@@ -79,7 +77,7 @@ function drawBox() {
         .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    var x = d3.scale.linear()
+    var x = d3.scaleLinear()
         .range([0, width])
         .domain([0, d3.max(bestPlayer[1], function(d) {
             return d.try;
@@ -89,19 +87,13 @@ function drawBox() {
     for (var i=0; i<bestPlayer.length; i++) {
        names.push(bestPlayer[i][1].name);
     }
-    var y = d3.scale.ordinal()
-        .rangeRoundBands([height, 0], 0.1)
+    var y = d3.scaleBand()
+        .rangeRound([height, 0], 0.1)
         .domain(names);
 
     // draw the axes
-    var yAxis = d3.svg.axis()
-        .scale(y)
-        .tickSize(0) // no ticks would be 0
-        .orient("left"); // barh
-    var xAxis = d3.svg.axis()
-        .scale(x)
-        .tickSize(0) // no ticks
-        .orient("bottom");
+    var yAxis = d3.axisLeft(y)
+    var xAxis = d3.axisBottom(x)
     var gy = svg.append("g")
         .attr("class", "y axis")
         .call(yAxis);
@@ -116,13 +108,12 @@ function drawBox() {
         .attr("y", function(d) {
             return y(d[1].name);
         })
-        .attr("height", y.rangeBand())
+        .attr("height", y.bandwidth())
         .attr("x", 0)
         .attr("width", function(d) {
             return x(d[1].try);
         })
         .attr("fill", function(d) {
-            console.log(d[2]);
             return colors[d[2]];
         });
     // add labels to right of each bar
@@ -130,7 +121,7 @@ function drawBox() {
         .attr("class", "label")
         // pos of lab half down bar
         .attr("y", function(d) {
-            return y(d[1].name) + y.rangeBand() / 2 + 4;
+            return y(d[1].name) + y.bandwidth() / 2 + 4;
         })
         // pos 3 pix to the right of the bar
         .attr("x", function(d) {
@@ -146,6 +137,9 @@ function drawBox() {
         var currentChoice = sect.options[sect.selectedIndex].value;
         d3.selectAll("h2").text(currentChoice + " World Cup leading try scorers");
         // update axes
+        if (currentChoice == "All countries") {
+            location.reload();
+        } else {
         var dataUpdate = dataJson[0][currentChoice];
         names = dataJson[0][currentChoice].map(function(t) {
             return t.name;
@@ -160,32 +154,27 @@ function drawBox() {
         gy.call(yAxis);
         // update the data, need enter because size has changed
         svg.selectAll(".bar")
-            .data(dataJson[0][currentChoice])
+            .data(dataJson[0][currentChoice]);
         // now redarw the rectangles using new data
         bars.selectAll('rect')
-            .transition()
             .attr("y", function(d) {
                 // 'y' here is the y scale
                 return y(d.name);
             })
-            .attr("height", y.rangeBand())
+            .attr("height", y.bandwidth())
             .attr("x", 0)
             .attr("width", function(d) {
                 return x(d.try);
             })
-            .each("end", function() { // <-- Executes at end of transition
-                d3.select(this)
-                .attr("fill", colors[currentChoice]);
-            });
+            .attr("fill", colors[currentChoice]);
         // add the new data to the labels using the class name
         svg.selectAll(".label")
             .data(dataJson[0][currentChoice].slice(0,20));
         // use this data to update text and position
         bars.selectAll("text")
-            .transition()
             // pos of lab half down bar
             .attr("y", function(d) {
-                return y(d.name) + y.rangeBand() / 2 + 4;
+                return y(d.name) + y.bandwidth() / 2 + 4;
             })
             // pos 3 pix to the right of the bar
             .attr("x", function(d) {
@@ -194,5 +183,6 @@ function drawBox() {
             .text(function(d) {
                 return d.try;
             });
+        }
     });
 }
