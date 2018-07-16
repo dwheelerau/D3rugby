@@ -161,8 +161,6 @@ function drawBox() {
         // update the data, need enter because size has changed
         svg.selectAll(".bar")
             .data(dataJson[0][currentChoice])
-            .enter()
-            .append("g");
         // now redarw the rectangles using new data
         bars.selectAll('rect')
             .transition()
@@ -182,7 +180,6 @@ function drawBox() {
         // add the new data to the labels using the class name
         svg.selectAll(".label")
             .data(dataJson[0][currentChoice].slice(0,20));
-            .enter();
         // use this data to update text and position
         bars.selectAll("text")
             .transition()
