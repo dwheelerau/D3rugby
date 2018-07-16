@@ -146,14 +146,16 @@ function drawBox() {
         var currentChoice = sect.options[sect.selectedIndex].value;
         d3.selectAll("h2").text(currentChoice + " World Cup leading try scorers");
         // update axes
+        var dataUpdate = dataJson[0][currentChoice];
         names = dataJson[0][currentChoice].map(function(t) {
             return t.name;
         }).slice(0, maxNames);
 
         y.domain(names);
-        x.domain([0, d3.max(dataJson[0][currentChoice], function(d) {
-            return d.try;
-        })]);
+        // don't update x-axis, just keep at max values from best players
+        //x.domain([0, d3.max(dataJson[0][currentChoice], function(d) {
+        //    return d.try;
+        //})]);
         // call the axis to update
         gy.call(yAxis);
         // update the data, need enter because size has changed
@@ -171,7 +173,7 @@ function drawBox() {
             .attr("height", y.rangeBand())
             .attr("x", 0)
             .attr("width", function(d) {
-            return x(d.try);
+                return x(d.try);
             })
             .each("end", function() { // <-- Executes at end of transition
                 d3.select(this)
@@ -179,8 +181,8 @@ function drawBox() {
             });
         // add the new data to the labels using the class name
         svg.selectAll(".label")
-        .data(dataJson[0][currentChoice].slice(0,20))
-        .enter();
+            .data(dataJson[0][currentChoice].slice(0,20));
+            .enter();
         // use this data to update text and position
         bars.selectAll("text")
             .transition()
