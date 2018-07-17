@@ -148,10 +148,6 @@ function drawBox() {
         }).slice(0, maxNames);
 
         y.domain(names);
-        // don't update x-axis, just keep at max values from best players
-        //x.domain([0, d3.max(dataJson[0][currentChoice], function(d) {
-        //    return d.try;
-        //})]);
         // call the axis to update
         gy.call(yAxis);
         // update the data, need enter because size has changed
@@ -174,7 +170,7 @@ function drawBox() {
 
         // add the new data to the labels using the class name
         svg.selectAll(".label")
-            .data(dataJson[0][currentChoice].slice(0,20));
+            .data(dataJson[0][currentChoice].slice(0, 20));
         // use this data to update text and position
         bars.selectAll("text")
             // pos of lab half down bar
@@ -186,7 +182,11 @@ function drawBox() {
                 return x(d.try) + 3;
             })
             .text(function(d) {
-                return d.try;
+                if (d.try == "1") {
+                    return d.try + " try";
+                } else {
+                    return d.try + " tries";
+                }
             });
         }
     });
