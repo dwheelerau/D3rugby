@@ -2,26 +2,26 @@ var maxNames = 20;
 var colors = {"Australia": "#ffe200",
                 "New Zealand": "black",
                 "Argentina": "#4295f4",
-                "Canada":"red",
-                "England":"white",
-                "Fiji":"white",
-                "France":"blue",
-                "Georgia":"#9d2823",
-                "Ireland":"green",
-                "Italy":"blue",
-                "Japan":"red",
-                "Namibia":"light blue",
-                "Portugal":"white",
-                "Romania":"yellow",
-                "Russia":"red",
-                "Samoa":"blue",
-                "Scotland":"dark blue",
-                "South Africa":"green",
-                "Tonga":"red",
-                "Uruguay":"#4396cc",
-                "United States":"white",
-                "Wales":"red",
-                "Zimbabwe":"green"};
+                "Canada": "red",
+                "England": "white",
+                "Fiji": "white",
+                "France": "blue",
+                "Georgia": "#9d2823",
+                "Ireland": "green",
+                "Italy": "blue",
+                "Japan": "red",
+                "Namibia": "light blue",
+                "Portugal": "white",
+                "Romania": "yellow",
+                "Russia": "red",
+                "Samoa": "blue",
+                "Scotland": "dark blue",
+                "South Africa": "green",
+                "Tonga": "red",
+                "Uruguay": "#4396cc",
+                "United States": "white",
+                "Wales": "red",
+                "Zimbabwe": "green"};
 
 var currentChoice = "";
 
@@ -42,7 +42,8 @@ function drawBox() {
     for (var c in dataJson[0]) {
         for (var n in dataJson[0][c]) {
             sortable.push([n, dataJson[0][c][n], c]);
-        }}
+        }
+    }
 
     sortable.sort(function(a, b) {
             return d3.descending(a[1]['try'], b[1]['try']);
@@ -62,11 +63,11 @@ function drawBox() {
 
     var margin = {
         top: 15,
-        right: 25,
+        right: 200,
         bottom: 15,
-        left: 150};
+        left: 200};
 
-    var width = 960 - margin.left - margin.right;
+    var width = 950 - margin.left - margin.right;
     var height = 500 - margin.top - margin.bottom;
 
     var svg = d3.select("#graphic")
@@ -167,7 +168,10 @@ function drawBox() {
             .attr("width", function(d) {
                 return x(d.try);
             })
-            .attr("fill", "#4295f4");
+            .attr("fill", "#4295f4")
+            .on('mouseover', mouseover)
+            .on('mouseout', mouseout);
+
         // add the new data to the labels using the class name
         svg.selectAll(".label")
             .data(dataJson[0][currentChoice].slice(0,20));
@@ -188,18 +192,48 @@ function drawBox() {
     });
 }
 function mouseover(d) {
-    var file = "static/data/" + d[1].name + ".jpg"
-    console.log(file);
+    console.log(d);
+    try {
+        var file = "static/data/" + d[1].name + ".jpg"
+    }
+    catch(err) {
+        var file = "static/data/" + d.name + ".jpg"
+    }
+    d3.select(this).style('fill', 'orange');
     d3.select("#tooltip")
         .select("#value")
-        .append('img')
-        .attr('src',file)
-        .attr("width", 150)
-        .attr("height", 150);
-        //.append("svg:image")
-        //.attr("xlink:href", file)
-        //.attr("width", 150)
-        //.attr("height", 200);
+        .text(file);
+    //d3.select("#image")
+    //    .append('img')
+    //    .attr('src', file)
+    //    .attr('height', 130)
+    //    .attr('width', 115);
+
+    var image = new Image();
+
+    image.onload = function() {
+        // image exists and is loaded
+        d3.select("#image")
+            .append('img')
+            .attr('src', file)
+            .attr('height', 130)
+            .attr('width', 115);
+        }
+    image.onerror = function() {
+        // image did not load
+        var missing_file = 'static/data/no_image.png';
+        d3.select("#image")
+            .append('img')
+            .attr('src', missing_file)
+            .attr('height', 130)
+            .attr('width', 115);
+        }
+
+        image.src = file;
+    //.append('img')
+    //   .attr('src',file)
+    //   .attr("width", 150)
+    //   .attr("height", 150);
     d3.select("#tooltip").classed("hidden", false);
     d3.select("#tooltip")
         .style("top", (event.pageY-10)+"px")
@@ -207,4 +241,6 @@ function mouseover(d) {
 }
 function mouseout(d) {
     d3.select("#tooltip").classed("hidden", true);
+    d3.select(this).style('fill', '#4295f4');
+    d3.select("#image").select('img').remove()
 }
