@@ -40,8 +40,13 @@ function drawBox() {
     // get sorted list of values for best across all countries
     sortable = [];
     for (var c in dataJson[0]) {
+        if (dataJson[0].hasOwnProperty(c)) {
         for (var n in dataJson[0][c]) {
-            sortable.push([n, dataJson[0][c][n], c]);
+            if (dataJson[0][c].hasOwnProperty(n)) {
+            var info = [n, dataJson[0][c][n], c];
+            sortable.push(info);
+        }
+        }
         }
     }
 
@@ -93,8 +98,8 @@ function drawBox() {
         .padding(.1);
 
     // draw the axes
-    var yAxis = d3.axisLeft(y)
-    var xAxis = d3.axisBottom(x)
+    var yAxis = d3.axisLeft(y);
+    // var xAxis = d3.axisBottom(x);
     var gy = svg.append("g")
         .attr("class", "y axis")
         .call(yAxis);
@@ -122,7 +127,7 @@ function drawBox() {
         .attr("class", "label")
         // pos of lab half down bar
         .attr("y", function(d) {
-            return y(d[1].name) + y.bandwidth() / 2 + 4 ;
+            return y(d[1].name) + y.bandwidth() / 2 + 4;
         })
         // pos 3 pix to the right of the bar
         .attr("x", function(d) {
@@ -134,16 +139,17 @@ function drawBox() {
         });
 
     // onclick function to update data
-    d3.select('#inds').on("change", function () {
+    d3.select('#inds').on("change", function() {
         var sect = document.getElementById("inds");
         var currentChoice = sect.options[sect.selectedIndex].value;
-        d3.selectAll("h2").text(currentChoice + " World Cup leading try scorers");
+        d3.selectAll("h2").text(currentChoice +
+            " World Cup leading try scorers");
         // update axes
         if (currentChoice == "All countries") {
             location.reload();
         } else {
-        var dataUpdate = dataJson[0][currentChoice];
-        names = dataJson[0][currentChoice].map(function(t) {
+            // var dataUpdate = dataJson[0][currentChoice];
+            names = dataJson[0][currentChoice].map(function(t) {
             return t.name;
         }).slice(0, maxNames);
 
@@ -191,23 +197,19 @@ function drawBox() {
         }
     });
 }
+
 function mouseover(d) {
     console.log(d);
     try {
-        var file = "static/data/" + d[1].name + ".jpg"
-    }
-    catch(err) {
-        var file = "static/data/" + d.name + ".jpg"
+        var file = "static/data/" + d[1].name + ".jpg";
+    } catch (err) {
+        var file = "static/data/" + d.name + ".jpg";
     }
     d3.select(this).style('fill', 'orange');
-    d3.select("#tooltip")
-        .select("#value")
-        .text(file);
-    //d3.select("#image")
-    //    .append('img')
-    //    .attr('src', file)
-    //    .attr('height', 130)
-    //    .attr('width', 115);
+    // leave this code, allows adding a tooltip
+    // d3.select('#tooltip")
+    //    .select("#value")
+    //    .text(file);
 
     var image = new Image();
 
@@ -218,23 +220,20 @@ function mouseover(d) {
             .attr('src', file)
             .attr('height', 130)
             .attr('width', 115);
-        }
+        };
     image.onerror = function() {
         // image did not load
-        var missing_file = 'static/data/no_image.png';
+        var missing_file = 'static/data/blank.png';
         d3.select("#image")
             .append('img')
             .attr('src', missing_file)
             .attr('height', 130)
             .attr('width', 115);
-        }
+        };
+    image.src = file;
 
-        image.src = file;
-    //.append('img')
-    //   .attr('src',file)
-    //   .attr("width", 150)
-    //   .attr("height", 150);
-    d3.select("#tooltip").classed("hidden", false);
+    // d3.select("#tooltip").classed("hidden", false);
+    d3.select("#tooltip").classed("hidden", true);
     d3.select("#tooltip")
         .style("top", (event.pageY-10)+"px")
         .style("left", (event.pageX-10)+"px");
@@ -242,5 +241,5 @@ function mouseover(d) {
 function mouseout(d) {
     d3.select("#tooltip").classed("hidden", true);
     d3.select(this).style('fill', '#4295f4');
-    d3.select("#image").select('img').remove()
+    d3.select("#image").select('img').remove();
 }

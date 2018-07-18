@@ -6,7 +6,7 @@ h2 {
     text-align: center;
 }
 #data {
-   padding-left: 100px; 
+   padding-left: 100px;
    width: auto;
 }
 #inds {
@@ -53,8 +53,10 @@ h2 {
 }
 #image {
     position: absolute;
-    width: 100px;
-    height: 100px;
     top: 100px;
-    left: 700px;
+    left: 600px;
+}
+img {
+    width: auto;
+    height: 220px;
 }
