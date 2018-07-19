@@ -67,9 +67,9 @@ function drawBox() {
     };
 
     var margin = {
-        top: 15,
+        top: 25,
         right: 200,
-        bottom: 15,
+        bottom: 25,
         left: 200};
 
     var width = 950 - margin.left - margin.right;
@@ -99,32 +99,47 @@ function drawBox() {
 
     // draw the axes
     var yAxis = d3.axisLeft(y);
-    // var xAxis = d3.axisBottom(x);
+    var xAxis = d3.axisBottom(x)
+        .ticks(15);
+    ;// var xAxis = d3.axisBottom(x);
     var gy = svg.append("g")
         .attr("class", "y axis")
         .call(yAxis);
-    // append the data to the bars
-    var bars = svg.selectAll(".bar")
+    var gx = svg.append("g")
+        .attr("class", "x axis")
+        .attr("transform",
+            "translate(0," + (height - 10) + ")")
+        .call(xAxis);
+    svg.append("text")
+        .attr("transform",
+            "translate(150," + (height + 25) + ")")
+        .text("tries scored");
+    // create bars
+    svg.selectAll("rect")
         .data(bestPlayer)
         .enter()
-        .append("g");
-    // add the rectangles
-    bars.append("rect")
-        .attr("class", "bar")
+        .append("rect")
         .attr("y", function(d) {
             return y(d[1].name);
         })
-        .attr("height", y.bandwidth())
         .attr("x", 0)
+        .attr("height", y.bandwidth())
         .attr("width", function(d) {
             return x(d[1].try);
         })
         .attr("fill", "#4295f4")
         .on('mouseover', mouseover)
         .on('mouseout', mouseout);
-    // add labels to right of each bar
-    bars.append("text")
-        .attr("class", "label")
+
+    //  this is not working?
+    svg.selectAll("text")
+        .data(bestPlayer)
+        .enter()
+        .append("text")
+        .text(function(d) {
+            return d[1].try + " tries for " + d[2];
+        })
+        .attr("text-anchor", "middle")
         // pos of lab half down bar
         .attr("y", function(d) {
             return y(d[1].name) + y.bandwidth() / 2 + 4;
@@ -132,13 +147,9 @@ function drawBox() {
         // pos 3 pix to the right of the bar
         .attr("x", function(d) {
             return x(d[1].try) + 3;
-        })
-        .text(function(d) {
-            console.log(d);
-            return d[1].try + " tries for " + d[2];
         });
 
-    // onclick function to update data
+        // onclick function to update data
     d3.select('#inds').on("change", function() {
         var sect = document.getElementById("inds");
         var currentChoice = sect.options[sect.selectedIndex].value;
@@ -156,11 +167,10 @@ function drawBox() {
         y.domain(names);
         // call the axis to update
         gy.call(yAxis);
-        // update the data, need enter because size has changed
-        svg.selectAll(".bar")
-            .data(dataJson[0][currentChoice]);
-        // now redarw the rectangles using new data
-        bars.selectAll('rect')
+        svg.selectAll("rect")
+            .data(dataJson[0][currentChoice])
+            .transition()
+            .delay(100)
             .attr("y", function(d) {
                 // 'y' here is the y scale
                 return y(d.name);
@@ -170,30 +180,7 @@ function drawBox() {
             .attr("width", function(d) {
                 return x(d.try);
             })
-            .attr("fill", "#4295f4")
-            .on('mouseover', mouseover)
-            .on('mouseout', mouseout);
-
-        // add the new data to the labels using the class name
-        svg.selectAll(".label")
-            .data(dataJson[0][currentChoice].slice(0, 20));
-        // use this data to update text and position
-        bars.selectAll("text")
-            // pos of lab half down bar
-            .attr("y", function(d) {
-                return y(d.name) + y.bandwidth() / 2 + 4;
-            })
-            // pos 3 pix to the right of the bar
-            .attr("x", function(d) {
-                return x(d.try) + 3;
-            })
-            .text(function(d) {
-                if (d.try == "1") {
-                    return d.try + " try";
-                } else {
-                    return d.try + " tries";
-                }
-            });
+            .attr("fill", "#4295f4");
         }
     });
 }
@@ -243,3 +230,4 @@ function mouseout(d) {
     d3.select(this).style('fill', '#4295f4');
     d3.select("#image").select('img').remove();
 }
+
