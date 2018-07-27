@@ -187,6 +187,7 @@ function drawBox() {
 
 function mouseover(d) {
     console.log(d);
+    d3.select("#image").select('img').remove();
     try {
         var file = "static/data/" + d[1].name + ".jpg";
     } catch (err) {
